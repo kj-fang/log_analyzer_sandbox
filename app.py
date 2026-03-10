@@ -1,6 +1,7 @@
 import os
 import datetime
 import threading
+import tiktoken
 from flask import Flask, render_template, request, jsonify, session
 from utils.link_wppTool import run_wpp_and_check
 from utils.filter import read_log_file, extract_enabled_keywords_from_filter_file, filter_log_by_keywords
@@ -363,6 +364,50 @@ def get_filters():
         available_filters = [f for f in os.listdir(filter_dir) if f.endswith('.tat')]
     
     return jsonify({'filters': available_filters})
+
+
+@app.route("/estimate_tokens", methods=["POST"])
+def estimate_tokens():
+    """Estimate token count of filtered log without calling LLM."""
+    try:
+        filter_name = request.form.get("filter_file", "")
+        etl_file = request.files.get("etl_file")
+
+        if not filter_name or not etl_file:
+            return jsonify({"error": "filter_file and etl_file are required"}), 400
+
+        filter_dir = rf"{project_root}\filter"
+        filter_path = os.path.join(filter_dir, filter_name)
+        if not os.path.exists(filter_path):
+            return jsonify({"error": f"Filter not found: {filter_name}"}), 404
+
+        # Run the same pipeline as the main analysis
+        import tempfile, shutil
+        tmp_dir = tempfile.mkdtemp()
+        try:
+            tmp_log_path = os.path.join(tmp_dir, etl_file.filename)
+            etl_file.save(tmp_log_path)
+
+            log_lines = read_log_file(tmp_log_path)
+            filter_keywords = extract_enabled_keywords_from_filter_file(filter_path)
+            filtered_log = filter_log_by_keywords(log_lines, filter_keywords)
+            processed_lines = preprocess_log_for_llm(filtered_log)
+            grouped = group_similar_logs(processed_lines)
+        finally:
+            shutil.rmtree(tmp_dir, ignore_errors=True)
+
+        log_text = str(grouped)
+        enc = tiktoken.get_encoding("cl100k_base")
+        token_count = len(enc.encode(log_text))
+        filtered_line_count = len(filtered_log) if isinstance(filtered_log, list) else log_text.count("\n")
+
+        return jsonify({
+            "estimated_tokens": token_count,
+            "filtered_lines": filtered_line_count
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route("/get_ollama_models", methods=["GET"])

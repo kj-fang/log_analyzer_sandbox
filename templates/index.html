@@ -40,7 +40,7 @@
         <div class="mb-3">
             <label class="form-label fw-bold">Select Filter File (.tat)</label>
             <div class="input-group">
-                <select name="filter_file" id="filterSelect" class="form-control" required>
+                <select name="filter_file" id="filterSelect" class="form-control" required onchange="tryEstimateTokens()">
                     <option value="">Select Log filter file</option>
                     {% for filter_file in available_filters %}
                         <option value="{{ filter_file }}">{{ filter_file }}</option>
@@ -52,6 +52,10 @@
                 <input type="file" id="filterUpload" class="d-none" accept=".tat" onchange="uploadFilterFile(this)">
             </div>
             <small class="form-text text-muted">Select filter from project_root/filter or upload new .tat file</small>
+            <div id="tokenEstimateBox" class="mt-2" style="display:none;">
+                <span id="tokenEstimateBadge" class="badge bg-info text-dark fs-6"></span>
+                <small id="tokenEstimateNote" class="text-muted ms-2"></small>
+            </div>
         </div>
         
         <!-- Prompt 選擇和編輯區域 -->
@@ -270,12 +274,61 @@ function validateETLFile(input) {
         } else {
             fileDisplay.value = file.name;
             fileDisplay.className = 'form-control is-valid';
+            tryEstimateTokens();
         }
     } else {
         fileDisplay.value = 'No file selected';
         fileDisplay.className = 'form-control';
     }
 }
+
+// ── Token estimation ─────────────────────────────────────────────────────────
+function tryEstimateTokens() {
+    const filterSelect = document.getElementById('filterSelect');
+    const etlInput = document.getElementById('etl_file');
+    const box = document.getElementById('tokenEstimateBox');
+    const badge = document.getElementById('tokenEstimateBadge');
+    const note = document.getElementById('tokenEstimateNote');
+
+    if (!filterSelect.value || !etlInput.files[0]) {
+        box.style.display = 'none';
+        return;
+    }
+
+    badge.textContent = '⏳ Estimating tokens...';
+    badge.className = 'badge bg-secondary fs-6';
+    note.textContent = '';
+    box.style.display = 'block';
+
+    const formData = new FormData();
+    formData.append('filter_file', filterSelect.value);
+    formData.append('etl_file', etlInput.files[0]);
+
+    fetch('/estimate_tokens', { method: 'POST', body: formData })
+        .then(r => r.json())
+        .then(data => {
+            if (data.error) {
+                badge.textContent = '⚠️ Estimation failed';
+                badge.className = 'badge bg-warning text-dark fs-6';
+                note.textContent = data.error;
+                return;
+            }
+            const t = data.estimated_tokens;
+            const lines = data.filtered_lines;
+            let colorClass = 'bg-success';
+            if (t > 80000) colorClass = 'bg-danger';
+            else if (t > 40000) colorClass = 'bg-warning text-dark';
+            badge.textContent = `🔢 ~${t.toLocaleString()} log tokens`;
+            badge.className = `badge ${colorClass} fs-6`;
+            note.textContent = `(${lines.toLocaleString()} filtered lines, prompt tokens not included)`;
+        })
+        .catch(err => {
+            badge.textContent = '⚠️ Estimation failed';
+            badge.className = 'badge bg-warning text-dark fs-6';
+            note.textContent = err.toString();
+        });
+}
+// ────────────────────────────────────────────────────────────────────────────
 
 // ── LLM Backend selection ──────────────────────────────────────────────────
 function onLLMBackendChange() {
