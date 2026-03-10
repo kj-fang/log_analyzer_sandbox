@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" backColor="dcdcdc" type="matches_text" case_sensitive="n" regex="n" text="PPAG" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="UEFI" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="SAR" />
+  </filters>
+</TextAnalysisTool.NET>

@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WiFi / BT Log Analyzer - Sandbox</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #promptEditor {
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body class="p-4" style="background-color: #f1f3f4;">
+
+<div class="container">
+    <h1 class="text-center py-3 fw-bold">
+        <span class="text-primary">WiFi / BT</span> 
+            Log Analyzer 
+        <span class="badge bg-secondary fs-6">Sandbox</span>
+    </h1>
+    <p class="text-center text-secondary mb-4">
+        Choose Filter → Edit Prompt → Upload Log File → LLM Analysis
+    </p>
+    <form id="analysisForm" method="POST" enctype="multipart/form-data" class="mb-4">
+        <!-- ETL 檔案上傳 -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Upload Log File (Sandbox: .log)</label>
+            <div class="input-group">
+                <button type="button" class="btn btn-secondary" onclick="document.getElementById('etl_file').click()">
+                    Browse
+                </button>
+                <input type="file" name="etl_file" id="etl_file" class="d-none" onchange="validateETLFile(this)" required>
+                <input type="text" id="file-display" class="form-control" placeholder="No file selected" readonly>
+            </div>
+            <small class="form-text text-muted">Supports .log formats</small>
+        </div>        
+        <!-- Filter 選擇 -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Select Filter File (.tat)</label>
+            <div class="input-group">
+                <select name="filter_file" id="filterSelect" class="form-control" required>
+                    <option value="">Select Log filter file</option>
+                    {% for filter_file in available_filters %}
+                        <option value="{{ filter_file }}">{{ filter_file }}</option>
+                    {% endfor %}
+                </select>
+                <button type="button" class="btn btn-sm btn-primary rounded-end" onclick="document.getElementById('filterUpload').click()">
+                    <i class="fas fa-upload"></i> Upload New
+                </button>
+                <input type="file" id="filterUpload" class="d-none" accept=".tat" onchange="uploadFilterFile(this)">
+            </div>
+            <small class="form-text text-muted">Select filter from project_root/filter or upload new .tat file</small>
+        </div>
+        
+        <!-- Prompt 選擇和編輯區域 -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Prompt Configuration</label>
+            
+            <!-- Prompt 類型選擇 -->
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label">Template Prompts</label>
+                    <select id="templateSelect" class="form-control">
+                        <option value="">Select template prompt</option>
+                        {% for template in available_prompts %}
+                            <option value="{{ template }}">{{ template }}</option>
+                        {% endfor %}
+                    </select>
+                    
+                    <button type="button" class="btn btn-sm btn-primary mt-2" onclick="loadPrompt('template')">
+                        Load Template
+                    </button>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label">Custom Prompts</label>
+                    <div class="input-group">
+                        <select id="customSelect" class="form-control">
+                            <option value="">Select custom prompt</option>
+                            {% for custom in available_custom_prompts %}
+                                <option value="{{ custom }}">{{ custom }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="button" class="btn btn-sm btn-primary rounded-end" onclick="document.getElementById('customPromptUpload').click()">
+                            <i class="fas fa-upload"></i> Upload New
+                        </button>
+                        <input type="file" id="customPromptUpload" class="d-none" accept=".py" onchange="uploadPromptFile(this)">
+                    </div>
+                    <button type="button" class="btn btn-sm btn-success mt-2" onclick="loadPrompt('custom')">
+                        Load Custom
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Prompt 編輯器 -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">Prompt Editor</label>
+                <textarea id="promptEditor" name="prompt_content" class="form-control" rows="15" 
+                          placeholder="Enter your custom prompt here or load from template/custom prompts above..." required></textarea>
+            </div>
+            
+            <!-- 儲存按鈕 -->
+            <div class="d-flex gap-2">
+                <button type="button" class="btn btn-secondary" onclick="clearEditor()">
+                    Clear
+                </button>
+                <button type="button" id="saveCurrentBtn" class="btn btn-success" onclick="saveCurrentPrompt()" style="display: none;">
+                    <i class="fas fa-save"></i> Save
+                </button>
+                <button type="button" class="btn btn-primary" onclick="showSaveModal()">
+                    Save as New Custom
+                </button>
+            </div>
+        </div>
+        
+        <!-- LLM Backend 選擇 -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">LLM Backend</label>
+            <div class="row g-2 align-items-end">
+                <div class="col-md-4">
+                    <label class="form-label text-muted small">Backend</label>
+                    <select name="llm_backend" id="llmBackendSelect" class="form-control" onchange="onLLMBackendChange()">
+                        <option value="expertgpt">☁️ ExpertGPT (GPT-4.1)</option>
+                        <option value="ollama">🖥️ Local Ollama (RTX 5080)</option>
+                    </select>
+                </div>
+                <div class="col-md-4" id="ollamaModelGroup" style="display:none;">
+                    <label class="form-label text-muted small">Ollama Model</label>
+                    <div class="input-group">
+                        <select name="ollama_model" id="ollamaModelSelect" class="form-control">
+                            <option value="">Loading...</option>
+                        </select>
+                        <button type="button" class="btn btn-sm btn-outline-secondary" onclick="refreshOllamaModels()" title="Refresh model list">
+                            🔄
+                        </button>
+                    </div>
+                </div>
+                <div class="col-md-3" id="ollamaCtxGroup" style="display:none;">
+                    <label class="form-label text-muted small">Context Window (num_ctx)</label>
+                    <select name="ollama_num_ctx" id="ollamaNumCtx" class="form-control">
+                        <option value="4096">4K (fast)</option>
+                        <option value="8192">8K</option>
+                        <option value="16384">16K</option>
+                        <option value="32768" selected>32K (recommended)</option>
+                        <option value="65536">64K (large logs)</option>
+                        <option value="131072">128K (max, ~21GB VRAM ⚠️)</option>
+                    </select>
+                </div>
+                <div class="col-md-4" id="ollamaStatusGroup" style="display:none;">
+                    <small id="ollamaStatus" class="text-muted"></small>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn btn-primary w-100 fw-bold">Run Analysis</button>
+    </form>
+
+    <!-- 進度顯示區域 -->
+    <div id="progressContainer" class="mb-4" style="display: none;">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title fw-bold">Processing...</h6>
+                <div class="progress mb-2">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+                <small id="progressText" class="text-muted">Initializing...</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- 結果顯示區域 -->
+    <div id="resultContainer">
+        {% if llm_result_html %}
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Analysis Result</h5>
+
+                {% if token_info %}
+                <!-- Token usage info bar -->
+                <div class="d-flex flex-wrap gap-2 mb-3 p-2 rounded" style="background:#f8f9fa; border:1px solid #dee2e6; font-size:0.82rem;">
+                    <span class="badge bg-secondary">{{ token_info.backend }} / {{ token_info.model }}</span>
+                    <span class="badge bg-primary" title="Tokens in prompt (system + user input)">
+                        📥 Prompt&nbsp;tokens: {{ token_info.prompt_tokens }}
+                    </span>
+                    <span class="badge bg-success" title="Tokens generated by the model">
+                        📤 Output&nbsp;tokens: {{ token_info.output_tokens }}
+                    </span>
+                    <span class="badge bg-dark" title="Total tokens consumed this query">
+                        🔢 Total: {{ token_info.total_tokens }}
+                    </span>
+                    {% if token_info.num_ctx and token_info.num_ctx != '—' %}
+                    <span class="badge bg-info text-dark" title="Context window configured for this query">
+                        🪟 Context&nbsp;window: {{ "{:,}".format(token_info.num_ctx) }} tokens
+                    </span>
+                    {% endif %}
+                    {% if token_info.ctx_used_pct and token_info.ctx_used_pct != '—' %}
+                    <span class="badge {% if token_info.ctx_used_pct|float > 90 %}bg-danger{% elif token_info.ctx_used_pct|float > 70 %}bg-warning text-dark{% else %}bg-success{% endif %}"
+                          title="Percentage of context window consumed (prompt + output)">
+                        📊 Ctx&nbsp;used: {{ token_info.ctx_used_pct }}%
+                    </span>
+                    {% endif %}
+                    {% if token_info.elapsed_sec is defined and token_info.elapsed_sec != '—' %}
+                    <span class="badge bg-secondary" title="Wall-clock time for LLM response">
+                        ⏱️ Time: {{ token_info.elapsed_sec }}s
+                    </span>
+                    {% endif %}
+                    {% if token_info.tokens_per_sec is defined and token_info.tokens_per_sec != '—' %}
+                    <span class="badge bg-secondary" title="Output tokens generated per second">
+                        ⚡ {{ token_info.tokens_per_sec }}&nbsp;tok/s
+                    </span>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <hr>
+                <div class="markdown-body">
+                    {{ llm_result_html|safe }}
+                </div>
+                {% if log_output_path %}
+                <p class="mt-3 text-muted">Processed log saved at: <code>{{ log_output_path }}</code></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- 儲存 Modal -->
+<div class="modal fade" id="saveModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Save Custom Prompt</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="form-label">Filename</label>
+                    <input type="text" id="saveFilename" class="form-control" placeholder="Enter filename (without .py extension)">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="savePrompt()">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>let progressInterval;
+let currentPromptFile = null; // 追蹤目前載入的檔案
+let currentPromptType = null; // 追蹤目前載入的類型
+
+function validateETLFile(input) {
+    const file = input.files[0];
+    const fileDisplay = document.getElementById('file-display');
+    
+    if (file) {
+        const fileName = file.name.toLowerCase();
+        const isValidETL = fileName.endsWith('.log');
+        
+        if (!isValidETL) {
+            alert('Please select a file with .log format');
+            input.value = '';
+            fileDisplay.value = 'No file selected';
+            fileDisplay.className = 'form-control';
+        } else {
+            fileDisplay.value = file.name;
+            fileDisplay.className = 'form-control is-valid';
+        }
+    } else {
+        fileDisplay.value = 'No file selected';
+        fileDisplay.className = 'form-control';
+    }
+}
+
+// ── LLM Backend selection ──────────────────────────────────────────────────
+function onLLMBackendChange() {
+    const backend = document.getElementById('llmBackendSelect').value;
+    const ollamaGroup = document.getElementById('ollamaModelGroup');
+    const statusGroup = document.getElementById('ollamaStatusGroup');
+    const ctxGroup = document.getElementById('ollamaCtxGroup');
+    if (backend === 'ollama') {
+        ollamaGroup.style.display = '';
+        statusGroup.style.display = '';
+        ctxGroup.style.display = '';
+        refreshOllamaModels();
+    } else {
+        ollamaGroup.style.display = 'none';
+        statusGroup.style.display = 'none';
+        ctxGroup.style.display = 'none';
+    }
+}
+
+function refreshOllamaModels() {
+    const select = document.getElementById('ollamaModelSelect');
+    const status = document.getElementById('ollamaStatus');
+    select.innerHTML = '<option value="">Loading...</option>';
+    status.textContent = 'Fetching models…';
+    fetch('/get_ollama_models')
+        .then(r => r.json())
+        .then(data => {
+            select.innerHTML = '';
+            if (data.models && data.models.length > 0) {
+                data.models.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    select.appendChild(opt);
+                });
+                status.textContent = `✅ ${data.models.length} model(s) available`;
+                status.className = 'text-success small';
+            } else {
+                select.innerHTML = '<option value="">No models found</option>';
+                status.textContent = '⚠️ No models – run: ollama pull llama3.1:8b';
+                status.className = 'text-warning small';
+            }
+        })
+        .catch(() => {
+            select.innerHTML = '<option value="">Error fetching models</option>';
+            status.textContent = '❌ Ollama not reachable (localhost:11434)';
+            status.className = 'text-danger small';
+        });
+}
+// ────────────────────────────────────────────────────────────────────────────
+
+function loadPrompt(type) {
+    const selectId = type === 'template' ? 'templateSelect' : 'customSelect';
+    const selectedFile = document.getElementById(selectId).value;
+    
+    if (!selectedFile) {
+        alert('Please select a prompt file first');
+        return;
+    }
+    
+    fetch('/load_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            type: type,
+            file: selectedFile
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        document.getElementById('promptEditor').value = data.content;
+        
+        // 更新目前載入的檔案資訊
+        currentPromptFile = selectedFile;
+        currentPromptType = type;
+        
+        // 如果是 custom prompt，顯示 Save 按鈕
+        const saveBtn = document.getElementById('saveCurrentBtn');
+        if (type === 'custom') {
+            saveBtn.style.display = 'inline-block';
+            saveBtn.innerHTML = `<i class="fas fa-save"></i> Save (${selectedFile})`;
+        } else {
+            saveBtn.style.display = 'none';
+        }
+        
+        // 清除另一個選擇器
+        const otherSelectId = type === 'template' ? 'customSelect' : 'templateSelect';
+        document.getElementById(otherSelectId).value = '';
+    })
+    .catch(error => {
+        console.error('Error loading prompt:', error);
+        alert('Error loading prompt');
+    });
+}
+
+function clearEditor() {
+    document.getElementById('promptEditor').value = '';
+    currentPromptFile = null;
+    currentPromptType = null;
+    document.getElementById('saveCurrentBtn').style.display = 'none';
+    document.getElementById('templateSelect').value = '';
+    document.getElementById('customSelect').value = '';
+}
+
+function saveCurrentPrompt() {
+    if (!currentPromptFile || currentPromptType !== 'custom') {
+        alert('No custom prompt file selected for saving');
+        return;
+    }
+    
+    const content = document.getElementById('promptEditor').value;
+    if (!content.trim()) {
+        alert('Please enter prompt content');
+        return;
+    }
+    
+    if (!confirm(`Are you sure you want to overwrite "${currentPromptFile}"?`)) {
+        return;
+    }
+    
+    fetch('/update_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: currentPromptFile,
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving prompt:', error);
+        alert('Failed to save prompt');
+    });
+}
+
+
+function uploadPromptFile(input, file_type) {
+    const file = input.files[0];
+    
+    if (!file) {
+        return;
+    }
+    
+    // 驗證檔案格式
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.py')) {
+        alert('Please select a file with .py format');
+        input.value = '';
+        return;
+    }
+    
+    // 確認上傳
+    if (!confirm(`Upload "${file.name}" to prompt directory?`)) {
+        input.value = '';
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('prompt_file', file);
+    
+    // 顯示上傳中狀態（可選：在按鈕上顯示）
+    const uploadBtn = input.previousElementSibling; // 獲取 Upload New 按鈕
+    const originalText = uploadBtn.innerHTML;
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    
+    fetch('/upload_prompt', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            
+            // 清除檔案選擇
+            input.value = '';
+            
+            // 更新 prompt 選擇列表，並自動選擇剛上傳的檔案
+            refreshPromptList(file.name);
+        } else {
+            alert('Error: ' + data.message);
+            input.value = '';
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading prompt:', error);
+        alert('Failed to upload prompt');
+        input.value = '';
+    })
+    .finally(() => {
+        // 恢復按鈕狀態
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = originalText;
+    });
+}
+
+// 刷新 prompt 列表（可選擇要自動選中的檔案）
+function refreshPromptList(selectFileName = null) {
+    fetch('/get_prompts')
+    .then(response => response.json())
+    .then(data => {
+        const promptSelect = document.getElementById('promptSelect');
+        
+        // 清除現有選項（保留第一個預設選項）
+        promptSelect.innerHTML = '<option value="">Select prompt file</option>';
+        
+        // 新增更新後的選項
+        data.prompts.forEach(prompt => {
+            const option = document.createElement('option');
+            option.value = prompt;
+            option.textContent = prompt;
+            
+            // 如果指定了要選中的檔案，自動選中它
+            if (selectFileName && prompt === selectFileName) {
+                option.selected = true;
+            }
+            
+            promptSelect.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error('Error refreshing prompt list:', error);
+    });
+}
+
+// 直接上傳 filter 檔案（當使用者選擇檔案後立即上傳）
+function uploadFilterFile(input, file_type) {
+    const file = input.files[0];
+    
+    if (!file) {
+        return;
+    }
+    
+    // 驗證檔案格式
+    const fileName = file.name.toLowerCase();
+    if (!fileName.endsWith('.tat')) {
+        alert('Please select a file with .tat format');
+        input.value = '';
+        return;
+    }
+    
+    // 確認上傳
+    if (!confirm(`Upload "${file.name}" to filter directory?`)) {
+        input.value = '';
+        return;
+    }
+    
+    const formData = new FormData();
+    formData.append('filter_file', file);
+    
+    // 顯示上傳中狀態（可選：在按鈕上顯示）
+    const uploadBtn = input.previousElementSibling; // 獲取 Upload New 按鈕
+    const originalText = uploadBtn.innerHTML;
+    uploadBtn.disabled = true;
+    uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Uploading...';
+    
+    fetch('/upload_filter', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            
+            // 清除檔案選擇
+            input.value = '';
+            
+            // 更新 filter 選擇列表，並自動選擇剛上傳的檔案
+            refreshFilterList(file.name);
+        } else {
+            alert('Error: ' + data.message);
+            input.value = '';
+        }
+    })
+    .catch(error => {
+        console.error('Error uploading filter:', error);
+        alert('Failed to upload filter');
+        input.value = '';
+    })
+    .finally(() => {
+        // 恢復按鈕狀態
+        uploadBtn.disabled = false;
+        uploadBtn.innerHTML = originalText;
+    });
+}
+
+// 刷新 filter 列表（可選擇要自動選中的檔案）
+function refreshFilterList(selectFileName = null) {
+    fetch('/get_filters')
+    .then(response => response.json())
+    .then(data => {
+        const filterSelect = document.getElementById('filterSelect');
+        
+        // 清除現有選項（保留第一個預設選項）
+        filterSelect.innerHTML = '<option value="">Select filter file</option>';
+        
+        // 新增更新後的選項
+        data.filters.forEach(filter => {
+            const option = document.createElement('option');
+            option.value = filter;
+            option.textContent = filter;
+            
+            // 如果指定了要選中的檔案，自動選中它
+            if (selectFileName && filter === selectFileName) {
+                option.selected = true;
+            }
+            
+            filterSelect.appendChild(option);
+        });
+    })
+    .catch(error => {
+        console.error('Error refreshing filter list:', error);
+    });
+}
+
+function showSaveModal() {
+    const content = document.getElementById('promptEditor').value;
+    if (!content.trim()) {
+        alert('Please enter some prompt content first');
+        return;
+    }
+    
+    const modal = new bootstrap.Modal(document.getElementById('saveModal'));
+    modal.show();
+}
+
+function savePrompt() {
+    const filename = document.getElementById('saveFilename').value;
+    const content = document.getElementById('promptEditor').value;
+    
+    if (!filename.trim()) {
+        alert('Please enter a filename');
+        return;
+    }
+    
+    fetch('/save_prompt', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            filename: filename,
+            content: content
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert(data.message);
+            const modal = bootstrap.Modal.getInstance(document.getElementById('saveModal'));
+            modal.hide();
+            document.getElementById('saveFilename').value = '';
+            // 重新載入頁面以更新 custom prompts 列表
+            location.reload();
+        } else {
+            alert('Error: ' + data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error saving prompt:', error);
+        alert('Error saving prompt');
+    });
+}
+
+function showProgress() {
+    document.getElementById('progressContainer').style.display = 'block';
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'Processing...';
+    
+    document.getElementById('resultContainer').innerHTML = '';
+    progressInterval = setInterval(checkProgress, 1000);
+}
+
+function hideProgress() {
+    document.getElementById('progressContainer').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Run Analysis';
+    
+    if (progressInterval) {
+        clearInterval(progressInterval);
+    }
+}
+
+function updateProgress(percentage, message) {
+    document.getElementById('progressBar').style.width = percentage + '%';
+    document.getElementById('progressText').textContent = message;
+}
+
+function checkProgress() {
+    fetch('/progress')
+        .then(response => response.json())
+        .then(data => {
+            updateProgress(data.percentage, data.message);
+            
+            if (data.status === 'completed') {
+                hideProgress();
+                loadResult();
+            } else if (data.status === 'error') {
+                hideProgress();
+                alert('Error occurred during processing: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking progress:', error);
+        });
+}
+
+function loadResult() {
+    fetch('/result')
+        .then(response => response.text())
+        .then(html => {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const resultElement = doc.getElementById('resultContainer');
+            
+            if (resultElement && resultElement.innerHTML.trim()) {
+                document.getElementById('resultContainer').innerHTML = resultElement.innerHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading result:', error);
+        });
+}
+
+// 表單提交處理
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    showProgress();
+    
+    fetch('/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        hideProgress();
+        alert('An error occurred during processing: ' + error);
+    });
+});
+</script>
+
+</body>
+</html> 

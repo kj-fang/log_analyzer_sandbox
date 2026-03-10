@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2023-04-25" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="Assert" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffffff" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="[E]" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="TASK_DISCONNECT[8]" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="9400d3" type="matches_text" case_sensitive="n" regex="n" text="DeAuth" />
+    <filter enabled="y" excluding="n" description="" foreColor="7fffd4" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text=" RESUME  " />
+    <filter enabled="y" excluding="n" description="" foreColor="ffffff" backColor="90ee90" type="matches_text" case_sensitive="n" regex="n" text="** SUSPEND" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="WDI_ASSOC_STATUS_SUCCESS" />
+    <filter enabled="y" excluding="n" description="" foreColor="7fffd4" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="CONNECTED - to: " />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="TASK_Connect[6]" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="MSCS" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffffff" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="Set SSID" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffff00" backColor="87cefa" type="matches_text" case_sensitive="n" regex="n" text="NIC State" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffff00" backColor="4169e1" type="matches_text" case_sensitive="n" regex="n" text="CRAD" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffffff" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text=" m_setpowerParams.PowerState" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="WAKEUP_" />
+    <filter enabled="y" excluding="n" description="" foreColor="ffff00" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="MISSED BEACONS" />
+    <filter enabled="y" excluding="n" description="" foreColor="7fff00" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="eWakeReason" />
+    <filter enabled="y" excluding="n" description="" foreColor="7fffd4" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="ROAM_DECISION - " />
+    <filter enabled="y" excluding="n" description="" foreColor="7fff00" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="ROAMING DECISION - " />
+    <filter enabled="y" excluding="n" description="" foreColor="6495ed" type="matches_text" case_sensitive="n" regex="n" text="NLO_FLOW" />
+    <filter enabled="n" excluding="n" description="" foreColor="00008b" backColor="dcdcdc" type="matches_text" case_sensitive="n" regex="n" text="WDI_SET_POWER_STATE" />
+    <filter enabled="y" excluding="n" description="" foreColor="00008b" type="matches_text" case_sensitive="n" regex="n" text="CNCT_FLOW" />
+    <filter enabled="y" excluding="n" description="" foreColor="006400" type="matches_text" case_sensitive="n" regex="n" text="Got Command" />
+    <filter enabled="n" excluding="n" description="" foreColor="008b8b" type="matches_text" case_sensitive="n" regex="n" text="prvTfdQueueSendCommand" />
+    <filter enabled="y" excluding="n" description="" foreColor="000000" type="matches_text" case_sensitive="n" regex="n" text="DP_MON" />
+    <filter enabled="y" excluding="n" description="" foreColor="daa520" type="matches_text" case_sensitive="n" regex="n" text="_RX" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="Fail" />
+    <filter enabled="n" excluding="n" description="" foreColor="6a5acd" type="matches_text" case_sensitive="n" regex="n" text="WFPM_GP2_REG" />
+    <filter enabled="y" excluding="n" description="" foreColor="4b0082" type="matches_text" case_sensitive="n" regex="n" text="MAIN BSS PLUGIN SM" />
+    <filter enabled="y" excluding="n" description="" foreColor="006400" type="matches_text" case_sensitive="n" regex="n" text="vifMgrPrintVifsInfo" />
+    <filter enabled="n" excluding="n" description="" foreColor="4b0082" type="matches_text" case_sensitive="n" regex="n" text="TLC_CONFIG" />
+    <filter enabled="y" excluding="n" description="" foreColor="800000" type="matches_text" case_sensitive="n" regex="n" text="[LAR" />
+    <filter enabled="y" excluding="n" description="" foreColor="b22222" type="matches_text" case_sensitive="n" regex="n" text="currMcc" />
+    <filter enabled="n" excluding="n" description="" foreColor="800080" type="matches_text" case_sensitive="n" regex="n" text="SAE" />
+    <filter enabled="n" excluding="n" description="" foreColor="008000" type="matches_text" case_sensitive="n" regex="n" text="RNR" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="prvdpPeerDbPrintPorts " />
+    <filter enabled="n" excluding="n" description="" foreColor="ff00ff" type="matches_text" case_sensitive="n" regex="n" text="candidate grade" />
+    <filter enabled="y" excluding="n" description="" backColor="f0e68c" type="matches_text" case_sensitive="n" regex="n" text="TASK_START_AP" />
+    <filter enabled="n" excluding="n" description="" backColor="add8e6" type="matches_text" case_sensitive="n" regex="n" text="uefi" />
+    <filter enabled="y" excluding="n" description="" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="platform" />
+    <filter enabled="n" excluding="n" description="" backColor="f08080" type="matches_text" case_sensitive="n" regex="n" text="LAR" />
+    <filter enabled="y" excluding="n" description="" backColor="ffff00" type="matches_text" case_sensitive="n" regex="n" text="GO_VIF" />
+    <filter enabled="n" excluding="n" description="" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="ClIENT_VIF" />
+    <filter enabled="n" excluding="n" description="" backColor="afeeee" type="matches_text" case_sensitive="n" regex="n" text="P2P_GO" />
+    <filter enabled="n" excluding="n" description="" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="DHCP" />
+    <filter enabled="n" excluding="n" description="" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="P2P_GO_PREFERRED_CHANNEL" />
+    <filter enabled="n" excluding="n" description="" backColor="afeeee" type="matches_text" case_sensitive="n" regex="n" text="vifMgrPrintVifsInfo" />
+    <filter enabled="n" excluding="n" description="" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="prvLarHandleChinaCapabilitiesDsm" />
+    <filter enabled="n" excluding="n" description="" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="China" />
+    <filter enabled="n" excluding="n" description="" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="TID_0" />
+    <filter enabled="n" excluding="n" description="" backColor="90ee90" type="matches_text" case_sensitive="n" regex="n" text="TID_5" />
+    <filter enabled="n" excluding="n" description="" backColor="ffff00" type="matches_text" case_sensitive="n" regex="n" text="TID_6" />
+    <filter enabled="n" excluding="n" description="" backColor="dcdcdc" type="matches_text" case_sensitive="n" regex="n" text="TID_7" />
+    <filter enabled="n" excluding="n" description="" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="TID_1" />
+    <filter enabled="n" excluding="n" description="" backColor="87cefa" type="matches_text" case_sensitive="n" regex="n" text="TID_2" />
+    <filter enabled="n" excluding="n" description="" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="TID_3" />
+    <filter enabled="n" excluding="n" description="" backColor="7fffd4" type="matches_text" case_sensitive="n" regex="n" text="TID_4" />
+    <filter enabled="n" excluding="n" description="" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="UDP" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="WMI" />
+    <filter enabled="n" excluding="n" description="" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="MLO" />
+    <filter enabled="n" excluding="n" description="" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="sensing" />
+    <filter enabled="n" excluding="n" description="" backColor="f08080" type="matches_text" case_sensitive="n" regex="n" text="SENSING_PROX" />
+    <filter enabled="y" excluding="n" description="" backColor="add8e6" type="matches_text" case_sensitive="n" regex="n" text="PLDR" />
+    <filter enabled="n" excluding="n" description="" backColor="add8e6" type="matches_text" case_sensitive="n" regex="n" text="PPAG" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="ANT" />
+    <filter enabled="n" excluding="n" description="" backColor="f08080" type="matches_text" case_sensitive="n" regex="n" text="Intel WLAN" />
+    <filter enabled="n" excluding="n" description="" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text=" RESUME FLOW FINISHED" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="wowlan" />
+    <filter enabled="n" excluding="n" description="" backColor="4169e1" type="matches_text" case_sensitive="n" regex="n" text="proximity" />
+    <filter enabled="n" excluding="n" description="" backColor="4169e1" type="matches_text" case_sensitive="n" regex="n" text="Sensing" />
+    <filter enabled="n" excluding="n" description="" backColor="f08080" type="matches_text" case_sensitive="n" regex="n" text="AP_Selection" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="AAA_PC_test2_5G" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="VLP" />
+    <filter enabled="n" excluding="n" description="" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="Sensing" />
+    <filter enabled="y" excluding="n" description="" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="AP_Selection" />
+    <filter enabled="y" excluding="n" description="" backColor="87cefa" type="matches_text" case_sensitive="n" regex="n" text="RequestParams-&gt;probeParams.bssid" />
+    <filter enabled="y" excluding="n" description="" backColor="87cefa" type="matches_text" case_sensitive="n" regex="n" text="SCAN_REQUEST - RequestParams-&gt;probeParams.shortSsid" />
+  </filters>
+</TextAnalysisTool.NET>

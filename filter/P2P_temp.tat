@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" foreColor="ffff00" backColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="TASK_DISCONNECT[8]" />
+    <filter enabled="y" excluding="n" foreColor="ffff00" backColor="9400d3" type="matches_text" case_sensitive="n" regex="n" text="DeAuth" />
+    <filter enabled="y" excluding="n" foreColor="7fffd4" backColor="008000" type="matches_text" case_sensitive="n" regex="n" text="CONNECTED - to: " />
+    <filter enabled="y" excluding="n" foreColor="000000" type="matches_text" case_sensitive="n" regex="n" text="DP_MON" />
+    <filter enabled="y" excluding="n" foreColor="800000" type="matches_text" case_sensitive="n" regex="n" text="[LAR" />
+    <filter enabled="y" excluding="n" foreColor="b22222" type="matches_text" case_sensitive="n" regex="n" text="currMcc" />
+    <filter enabled="y" excluding="n" backColor="f0e68c" type="matches_text" case_sensitive="n" regex="n" text="TASK_START_AP" />
+    <filter enabled="y" excluding="n" backColor="ffff00" type="matches_text" case_sensitive="n" regex="n" text="GO_VIF" />
+    <filter enabled="y" excluding="n" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="ClIENT_VIF" />
+    <filter enabled="y" excluding="n" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="P2P_GO_PREFERRED_CHANNEL" />
+  </filters>
+</TextAnalysisTool.NET>

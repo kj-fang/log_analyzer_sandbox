@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>WiFi / BT Log Analyzer</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4" style="background-color: #f1f3f4;">
+
+<div class="container">
+    <h2 class="text-center mb-4 fw-bold">WiFi / BT Log Analyzer</h2>
+
+    <form id="analysisForm" method="POST" enctype="multipart/form-data" class="mb-4">
+        <!-- Filter 和 Prompt 水平對齊 -->
+        <div class="row mb-3">
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Select Filter File (.tat)</label>
+                <select name="filter_file" class="form-control" required>
+                    <option value="">select filter file</option>
+                    {% for filter_file in available_filters %}
+                        <option value="{{ filter_file }}">{{ filter_file }}</option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">select filter from project_root/filter</small>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label fw-bold">Select Prompt File (.py)</label>
+                <select name="prompt_file" class="form-control" required>
+                    <option value="">select prompt file</option>
+                    {% for prompt_file in available_prompts %}
+                        <option value="{{ prompt_file }}">{{ prompt_file }}</option>
+                    {% endfor %}
+                </select>
+                <small class="form-text text-muted">select prompt from project_root/prompt</small>
+            </div>
+        </div>
+        
+        <!-- ETL 檔案上傳 -->
+        <div class="mb-3">
+            <label class="form-label fw-bold">Upload ETL File (.etl / .etl.001)</label>
+            <div class="input-group">
+                <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('etl_file').click()">
+                    Browse
+                </button>
+                <input type="file" name="etl_file" id="etl_file" class="d-none" onchange="validateETLFile(this)" required>
+                <input type="text" id="file-display" class="form-control" placeholder="No file selected" readonly>
+            </div>
+            <small class="form-text text-muted">Supports .etl and .etl.001, .etl.002, etc. formats</small>
+        </div>
+        
+        <button type="submit" id="submitBtn" class="btn btn-primary w-100">Run Analysis</button>
+    </form>
+
+    <!-- 進度顯示區域 -->
+    <div id="progressContainer" class="mb-4" style="display: none;">
+        <div class="card">
+            <div class="card-body">
+                <h6 class="card-title">Processing...</h6>
+                <div class="progress mb-2">
+                    <div id="progressBar" class="progress-bar progress-bar-striped progress-bar-animated" 
+                         role="progressbar" style="width: 0%"></div>
+                </div>
+                <small id="progressText" class="text-muted">Initializing...</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- 結果顯示區域 -->
+    <div id="resultContainer">
+        {% if llm_result_html %}
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5 class="card-title fw-bold">Analysis Result</h5>
+                <hr>
+                <div class="markdown-body">
+                    {{ llm_result_html|safe }}
+                </div>
+                {% if log_output_path %}
+                <p class="mt-3 text-muted">Processed log saved at: <code>{{ log_output_path }}</code></p>
+                {% endif %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+let progressInterval;
+
+function validateETLFile(input) {
+    const file = input.files[0];
+    const fileDisplay = document.getElementById('file-display');
+    
+    if (file) {
+        const fileName = file.name.toLowerCase();
+        const isValidETL = fileName.endsWith('.etl') || /\.etl\.\d+$/.test(fileName);
+        
+        if (!isValidETL) {
+            alert('Please select a file with .etl or .etl.xxx format');
+            input.value = '';
+            fileDisplay.value = 'No file selected';
+            fileDisplay.className = 'form-control';
+        } else {
+            fileDisplay.value = file.name;
+            fileDisplay.className = 'form-control is-valid';
+        }
+    } else {
+        fileDisplay.value = 'No file selected';
+        fileDisplay.className = 'form-control';
+    }
+}
+
+function showProgress() {
+    document.getElementById('progressContainer').style.display = 'block';
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = 'Processing...';
+    
+    // 清空之前的結果
+    document.getElementById('resultContainer').innerHTML = '';
+    
+    // 開始輪詢進度
+    progressInterval = setInterval(checkProgress, 1000);
+}
+
+function hideProgress() {
+    document.getElementById('progressContainer').style.display = 'none';
+    document.getElementById('submitBtn').disabled = false;
+    document.getElementById('submitBtn').textContent = 'Run Analysis';
+    
+    if (progressInterval) {
+        clearInterval(progressInterval);
+    }
+}
+
+function updateProgress(percentage, message) {
+    document.getElementById('progressBar').style.width = percentage + '%';
+    document.getElementById('progressText').textContent = message;
+}
+
+function checkProgress() {
+    fetch('/progress')
+        .then(response => response.json())
+        .then(data => {
+            updateProgress(data.percentage, data.message);
+            
+            if (data.status === 'completed') {
+                hideProgress();
+                // 獲取結果並顯示
+                loadResult();
+            } else if (data.status === 'error') {
+                hideProgress();
+                alert('Error occurred during processing: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error checking progress:', error);
+        });
+}
+
+function loadResult() {
+    // 重新載入頁面以顯示結果
+    fetch('/result')
+        .then(response => response.text())
+        .then(html => {
+            // 解析 HTML 並提取結果部分
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const resultElement = doc.getElementById('resultContainer');
+            
+            if (resultElement && resultElement.innerHTML.trim()) {
+                document.getElementById('resultContainer').innerHTML = resultElement.innerHTML;
+            }
+        })
+        .catch(error => {
+            console.error('Error loading result:', error);
+        });
+}
+
+// 表單提交處理
+document.getElementById('analysisForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    showProgress();
+    
+    // 只提交表單，不處理回應的 HTML
+    fetch('/', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        // 不需要處理回應，讓進度輪詢處理
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        hideProgress();
+        alert('An error occurred during processing');
+    });
+});
+</script>
+
+</body>
+</html>

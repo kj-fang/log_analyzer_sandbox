@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="oemUhbAllowBitMap" />
+  </filters>
+</TextAnalysisTool.NET>

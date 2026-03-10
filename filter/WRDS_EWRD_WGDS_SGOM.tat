@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2023-04-25" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" description="" foreColor="5f9ea0" type="matches_text" case_sensitive="n" regex="n" text="[REG] [SPECIAL] [paramLoadStr]" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="prvBiosAccessorInitDataForWrdsSarTbl" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="prvBiosAccessorInitDataForStaticSarTbl" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="prvBiosAccessorInitDataForEwrdSarTbl" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="biosAccessorGenerateSarTableAPI" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="biosAccessorGetSarGeoDeltaTblsApi" />
+    <filter enabled="y" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="n" text="biosAccessorGetSarGeoDeltaTblsApi" />
+    <filter enabled="y" excluding="n" description="" foreColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="mhiffTraslateSarOffsetMappingCmdVer2" />
+    <filter enabled="y" excluding="n" description="" foreColor="008000" type="matches_text" case_sensitive="n" regex="n" text="Successful read of table WRDS" />
+    <filter enabled="y" excluding="n" description="" foreColor="008000" type="matches_text" case_sensitive="n" regex="n" text="Successful read of table EWRD" />
+    <filter enabled="y" excluding="n" description="" foreColor="006400" type="matches_text" case_sensitive="n" regex="n" text="Successful read of table WGDS" />
+    <filter enabled="y" excluding="n" description="" foreColor="ff00ff" type="matches_text" case_sensitive="n" regex="n" text="WRDS" />
+    <filter enabled="y" excluding="n" description="" foreColor="fa8072" type="matches_text" case_sensitive="n" regex="n" text="WGDS" />
+    <filter enabled="y" excluding="n" description="" foreColor="ee82ee" type="matches_text" case_sensitive="n" regex="n" text="EWRD" />
+  </filters>
+</TextAnalysisTool.NET>

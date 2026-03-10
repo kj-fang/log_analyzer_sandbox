@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="False">
+  <filters>
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="        Lock Status    0x" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="    4 Revision" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 0" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 1" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 2" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 3" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 4" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 5" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 6" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 7" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 8" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="      Function 9" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="    ACPI_DSM        " />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="          WiFi DSM supported functions" />
+  </filters>
+</TextAnalysisTool.NET>

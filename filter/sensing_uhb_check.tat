@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="sensing" />
+    <filter enabled="y" excluding="n" foreColor="800080" type="matches_text" case_sensitive="n" regex="n" text="dsm" />
+    <filter enabled="y" excluding="n" foreColor="00008b" type="matches_text" case_sensitive="n" regex="n" text="uefi" />
+    <filter enabled="y" excluding="n" foreColor="ff1493" type="matches_text" case_sensitive="n" regex="n" text="UHB" />
+    <filter enabled="y" excluding="n" foreColor="00008b" type="matches_text" case_sensitive="n" regex="n" text="[REG          ]" />
+  </filters>
+</TextAnalysisTool.NET>

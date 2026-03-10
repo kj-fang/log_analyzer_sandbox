@@ -1,0 +1,14 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2015-06-23" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="y" excluding="n" backColor="ffff00" type="matches_text" case_sensitive="n" regex="n" text="BIOS source of table:" />
+    <filter enabled="y" excluding="n" backColor="7fffd4" type="matches_text" case_sensitive="n" regex="n" text="DSM" />
+    <filter enabled="y" excluding="n" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="PPAG BIOS Table" />
+    <filter enabled="y" excluding="n" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="n" text="[getPerPlatformAntennaGainDataFromBiosApi]" />
+    <filter enabled="y" excluding="n" backColor="ffa07a" type="matches_text" case_sensitive="n" regex="n" text="[biosAccessorGenerateSarTableAPI]" />
+    <filter enabled="y" excluding="n" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="n" text="[prvBiosAccessorInitDataForStaticSarTbl]" />
+    <filter enabled="y" excluding="n" type="matches_text" case_sensitive="n" regex="n" text="from BIOS config" />
+    <filter enabled="y" excluding="n" backColor="90ee90" type="matches_text" case_sensitive="n" regex="n" text="[mhiffTranslateMccAllowedUhbApTypeCmdVer1]" />
+    <filter enabled="y" excluding="n" backColor="87cefa" type="matches_text" case_sensitive="n" regex="n" text="[prvLarSendLariChangeConfig]: : oemUhbAllowBitMap" />
+  </filters>
+</TextAnalysisTool.NET>

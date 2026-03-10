@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<TextAnalysisTool.NET version="2023-04-25" showOnlyFilteredLines="True">
+  <filters>
+    <filter enabled="n" excluding="n" description="" foreColor="ffffff" backColor="ff0000" type="matches_text" case_sensitive="n" regex="y" text="karma|fatal|rtstatus|ucode nmi|is hung|NIC_EVENT_HW_ERROR|hang command id|FwInit: Encountered UMAC assert" />
+    <filter enabled="n" excluding="n" description="" backColor="90ee90" type="matches_text" case_sensitive="y" regex="y" text="(\* SUSPEND|\* RESUME)" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ff00" backColor="9400d3" type="matches_text" case_sensitive="n" regex="n" text="lmacstop" />
+    <filter enabled="n" excluding="n" description="" backColor="ffff00" type="matches_text" case_sensitive="y" regex="y" text="ALIVE_UCODE|Alive INTERRUPT" />
+    <filter enabled="n" excluding="n" description="" foreColor="7fff00" backColor="9400d3" type="matches_text" case_sensitive="n" regex="y" text="MISSED.*BEACONS.*disco" />
+    <filter enabled="n" excluding="n" description="" foreColor="dc143c" backColor="afeeee" type="matches_text" case_sensitive="n" regex="y" text="low rssi|better candidate found|indicating roaming needed for VIF" />
+    <filter enabled="n" excluding="n" description="" backColor="d3d3d3" type="matches_text" case_sensitive="n" regex="y" text="tfdQueueSend.*Command ID" />
+    <filter enabled="n" excluding="n" description="" backColor="778899" type="matches_text" case_sensitive="n" regex="y" text="(rfdQueueGenericDispatchApi|prvRfdQueueDispatch).*Solicited   Command ID" />
+    <filter enabled="n" excluding="n" description="" foreColor="b22222" backColor="f0e68c" type="matches_text" case_sensitive="n" regex="y" text="Rx port is closed|rxDataDrainDetainedQueue|rxDataBackBufAgingCheckMultiQueue|txTidQueuePacketsAging|txFlushSingleTidQueueScheduledPackets" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff0000" type="matches_text" case_sensitive="n" regex="y" text="drop|faild|out of order detected" />
+    <filter enabled="n" excluding="n" description="" foreColor="0000ff" type="matches_text" case_sensitive="n" regex="y" text="(\[e\]|\[error\])" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ff00" backColor="008000" type="matches_text" case_sensitive="n" regex="y" text="miniport reset|os issue" />
+    <filter enabled="n" excluding="n" description="" backColor="ffa500" type="matches_text" case_sensitive="n" regex="n" text="submitscan" />
+    <filter enabled="n" excluding="n" description="" backColor="ffb6c1" type="matches_text" case_sensitive="n" regex="y" text="m1 message|got oid" />
+    <filter enabled="n" excluding="n" description="" backColor="f0e68c" type="matches_text" case_sensitive="n" regex="y" text="(m3|m4) message|oid=" />
+    <filter enabled="n" excluding="n" description="" foreColor="800080" type="matches_text" case_sensitive="n" regex="y" text="prvNicDbgDrvTriggerDump" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="vifMgrPrintVifsInfo" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffff00" backColor="778899" type="matches_text" case_sensitive="n" regex="y" text="prvhPolicyOpenRxPort|~~" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffff00" backColor="000000" type="matches_text" case_sensitive="n" regex="y" text="surprise removal| surprise remove have been requested from OS|PLDR occured max times, Driver should init with YB|current pldr method is" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff0000" backColor="000000" type="matches_text" case_sensitive="y" regex="y" text="RADIO Set|# sw rfkill: start flow, radio|-- CT RADIO" />
+    <filter enabled="n" excluding="n" description="" backColor="dda0dd" type="matches_text" case_sensitive="n" regex="y" text="(mmaclinkq.*(bandwidth is|rates))|\+\-\+" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffffff" backColor="000000" type="matches_text" case_sensitive="n" regex="y" text="dp_mon.*n]," />
+    <filter enabled="n" excluding="n" description="" foreColor="00ff00" backColor="4169e1" type="matches_text" case_sensitive="n" regex="y" text="dp_monitor.*TX" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffff00" backColor="4169e1" type="matches_text" case_sensitive="n" regex="y" text="dp_monitor.*RX" />
+    <filter enabled="n" excluding="n" description="" foreColor="00008b" backColor="f08080" type="matches_text" case_sensitive="n" regex="y" text="dpOffloadLsoSetInitParamsAPI|LSO Event Viewer" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ffff" backColor="008000" type="matches_text" case_sensitive="n" regex="y" text="xboxWorkItemForIoctlCB.*channel" />
+    <filter enabled="n" excluding="n" description="" foreColor="800080" backColor="778899" type="matches_text" case_sensitive="n" regex="y" text="tfdQueueMgrDeactivateQueueApi.*disable|tfdQueueConfigLegacyQueueAPI" />
+    <filter enabled="n" excluding="n" description="" foreColor="800080" backColor="7fffd4" type="matches_text" case_sensitive="n" regex="y" text="tfdQueueMgrActivateQueueApi.*enable|prvTfdQueueMgrScdQueueConfigEnableCb" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="_rx" />
+    <filter enabled="n" excluding="n" description="" foreColor="ffa500" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="[application" />
+    <filter enabled="n" excluding="n" description="" foreColor="8b008b" type="matches_text" case_sensitive="y" regex="y" text="EAPOL" />
+    <filter enabled="n" excluding="n" description="" backColor="87cefa" type="matches_text" case_sensitive="n" regex="y" text="cnct_flow|deauth|diass|disas|scan_complete" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="router dll" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ffff" backColor="778899" type="matches_text" case_sensitive="n" regex="y" text="prvAlonHwDetect|legacy_alon_nic_identify" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff1493" backColor="ffffff" type="matches_text" case_sensitive="n" regex="y" text="m1.*task_start_ap|Received Auth request from a new Clien" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="heci" />
+    <filter enabled="n" excluding="n" description="" foreColor="4b0082" type="matches_text" case_sensitive="n" regex="n" text="dot11ax" />
+    <filter enabled="n" excluding="n" description="" foreColor="808000" type="matches_text" case_sensitive="n" regex="n" text="Tx A-MSDU in A-MPDU is supported" />
+    <filter enabled="n" excluding="n" description="" foreColor="2e8b57" type="matches_text" case_sensitive="n" regex="y" text="rfdQueueGenericDispatchApi.*Unsolicited Command" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff1493" backColor="d3d3d3" type="matches_text" case_sensitive="n" regex="n" text="prvhLinkQualitySendBeaconFilteringCmd" />
+    <filter enabled="n" excluding="n" description="" foreColor="b22222" type="matches_text" case_sensitive="n" regex="n" text="dpc was chopped" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff1493" type="matches_text" case_sensitive="n" regex="n" text="Wakeup due to: " />
+    <filter enabled="n" excluding="n" description="" foreColor="006400" type="matches_text" case_sensitive="n" regex="n" text="mRlcSendRlcCmdAPI: RLC CFG CMD" />
+    <filter enabled="n" excluding="n" description="" foreColor="dc143c" type="matches_text" case_sensitive="n" regex="n" text="OID_SV_RLG_FLUSH" />
+    <filter enabled="n" excluding="n" description="" foreColor="7fff00" backColor="9400d3" type="matches_text" case_sensitive="n" regex="n" text="Received Frame Release Notification" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="bssVifGetPeerBssidIndexAPI:: Failed to get BSS candidate" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="y" text="SCAN_REQUEST - channel index=.*flags" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="y" regex="n" text="SCAN_REQUEST - channel[" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="y" regex="n" text="SCAN_REQUEST - generalParams" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="y" regex="n" text="SCAN_REQUEST - periodicParams" />
+    <filter enabled="n" excluding="n" description="" foreColor="5f9ea0" type="matches_text" case_sensitive="n" regex="y" text="buildandsend.*channelinfo" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="droppolicy" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="connection timer expired" />
+    <filter enabled="n" excluding="n" description="" backColor="d3d3d3" type="matches_text" case_sensitive="n" regex="n" text="GO activated with SSID" />
+    <filter enabled="n" excluding="n" description="" foreColor="0000ff" backColor="f0e68c" type="matches_text" case_sensitive="n" regex="n" text="xvt mode enabled" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="Lmac status 0x0, umac status 0x0, Log is not valid" />
+    <filter enabled="n" excluding="n" description="" foreColor="008000" type="matches_text" case_sensitive="y" regex="y" text="(- SUSPEND|- RESUME)" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="fw is dead" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="is Fatal error = FALSE" />
+    <filter enabled="n" excluding="n" description="" foreColor="7fff00" backColor="008000" type="matches_text" case_sensitive="n" regex="y" text="GO_VIF.*Client.*reached Tx failure threshold of.*Disconnecting Client" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="log is not valid" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="FwInit: Rtstatus value at start of FW init: 0x0" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="Lmac rtStatus is 0, get rtStatus from Umac: 0x0" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="halGetRtStatusAp" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="FwInit: Rtstatus value at start of FW init" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="DeviceControlLayer::PhyDropsVersionTlv::print" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="y" text="mac rtStatus.*Log is Valid" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="y" text="osMemoryInitLookasideList.*size.*is larger than max size" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="value read from HW interrupts cause reg" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff0000" type="matches_text" case_sensitive="n" regex="n" text="BSOD flow - dump collector was called by OS" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="aaa" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="CSR_REGS_RESET_DEBUG_CSR_ADDR" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ff00" backColor="000000" type="matches_text" case_sensitive="n" regex="n" text="Toggle SBR bit" />
+    <filter enabled="n" excluding="n" description="" foreColor="ff69b4" backColor="dcdcdc" type="matches_text" case_sensitive="n" regex="n" text="Host is NOT the semaphore owner" />
+    <filter enabled="n" excluding="n" description="" foreColor="00ff00" type="matches_text" case_sensitive="n" regex="n" text="[RESUME FLOW] D3 image State" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="HB-UHB low RSSI penalty" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="Candidate RSSI is average" />
+    <filter enabled="n" excluding="n" description="" type="matches_text" case_sensitive="n" regex="n" text="command id" />
+    <filter enabled="n" excluding="y" description="" type="matches_text" case_sensitive="n" regex="n" text="Maflormed MLD common info was detected, possible bugs should be expected !!!" />
+    <filter enabled="y" excluding="n" description="" foreColor="ff0000" backColor="dcdcdc" type="matches_text" case_sensitive="n" regex="n" text="sensing" />
+  </filters>
+</TextAnalysisTool.NET>

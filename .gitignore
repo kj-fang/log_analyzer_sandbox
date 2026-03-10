@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.env/
+*.venv
+
+# Secrets / API keys
+configs/key.py
+
+# Log data (can be large)
+log_data/
+log_data_tmp/
+parser_tool_tmp/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
