@@ -2,23 +2,23 @@ import re
 from collections import defaultdict
 from typing import List
 
-def preprocess_log_for_llm(log_lines, preserve_timestamps=True):
+def preprocess_log_for_llm(log_lines):
     processed_lines = []
     
     for line in log_lines:
         if not line.strip():
             continue
             
-        # 1. timestamp
-        if preserve_timestamps:
-            line = re.sub(r'(\d{2}/\d{2}/\d{4})-(\d{2}:\d{2}:\d{2})\.\d{3}', r'<TIME:\2>', line)
-        else:
-            line = re.sub(r'\d{2}/\d{2}/\d{4}-\d{2}:\d{2}:\d{2}\.\d{3}', '<TIMESTAMP>', line)
+        # 1. timestamp - keep MM/DD HH:MM:SS, drop year and milliseconds
+        line = re.sub(r'(\d{2}/\d{2})/\d{4}-(\d{2}:\d{2}:\d{2})\.\d{3}', r'\1 \2', line)
         
         # 2. unify 
         # Thread ID
         #line = re.sub(r'\[(\d+)\]', r'[<THREAD_ID>]', line)
         line = re.sub(r'\[(\d+)\]', '', line)
+
+        # Module / level metadata: ALL_CAPS brackets like [TLC_CONFIG] [SPECIAL]
+        line = re.sub(r'\[[A-Z][A-Z0-9_]*\]', '', line)
         
         # ETW
         #line = re.sub(r'etwTimeStamp = \d+', 'etwTimeStamp = <ETW_TIMESTAMP>', line)
@@ -53,7 +53,7 @@ def group_similar_logs(processed_lines):
     grouped_logs = defaultdict(list)
     
     for line in processed_lines:
-        pattern = re.sub(r'\[TIME:[^\]]+\]', '[TIME:*]', line)
+        pattern = re.sub(r'\d{2}:\d{2}:\d{2}', '<TIME>', line)  # normalize time for grouping
         grouped_logs[pattern].append(line)
     
     result = []
@@ -63,14 +63,8 @@ def group_similar_logs(processed_lines):
         elif len(lines) <= 2:
             result.extend(lines)
         else:
-            first_time = re.search(r'\[TIME:([^\]]+)\]', lines[0])
-            last_time = re.search(r'\[TIME:([^\]]+)\]', lines[-1])
-            
             result.append(lines[0])
-            if first_time and last_time:
-                result.append(f"... (repeated {len(lines)-2} times between {first_time.group(1)} and {last_time.group(1)}) ...")
-            else:
-                result.append(f"... (repeated {len(lines)-2} times) ...")
+            result.append(f"... (repeated {len(lines)-2} more times) ...")
             result.append(lines[-1])
     
     return result

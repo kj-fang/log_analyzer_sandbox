@@ -4,7 +4,7 @@ import threading
 import tiktoken
 from flask import Flask, render_template, request, jsonify, session
 from utils.link_wppTool import run_wpp_and_check
-from utils.filter import read_log_file, extract_enabled_keywords_from_filter_file, filter_log_by_keywords
+from utils.filter import read_log_file, extract_enabled_keywords_from_filter_file, extract_exclude_keywords_from_filter_file, filter_log_by_keywords
 from utils.parse_log import preprocess_log_for_llm, group_similar_logs, save_file
 from utils.llm_expertgpt import LLM_helper
 from utils.llm_ollama import OllamaLLM_helper, get_available_ollama_models
@@ -95,7 +95,7 @@ def get_result():
                          token_info=result.get('token_info'),
                          available_filters=available_filters)
 
-def process_analysis_async(filter_path, etl_path, output_dir, llm_helper, prompt, session_id):
+def process_analysis_async(filter_path, etl_path, output_dir, llm_helper, prompt, session_id, exclude_keywords=None):
     """非同步處理分析任務"""
     global user_progress, user_results
     
@@ -114,16 +114,19 @@ def process_analysis_async(filter_path, etl_path, output_dir, llm_helper, prompt
         # 步驟 3: 提取過濾關鍵字
         update_progress(40, "Extracting filter keywords...", session_id)
         filter_keywords = extract_enabled_keywords_from_filter_file(filter_path)
+        tat_exclude_keywords = extract_exclude_keywords_from_filter_file(filter_path)
+        merged_exclude = tat_exclude_keywords + exclude_keywords  # tat entries are dicts, manual entries are plain strings
         
         # 步驟 4: 過濾日誌
         update_progress(55, "Filtering log entries...", session_id)
-        filtered_log = filter_log_by_keywords(log_lines, filter_keywords)
+        filtered_log = filter_log_by_keywords(log_lines, filter_keywords, exclude_keywords=merged_exclude)
         save_file(os.path.join(output_dir, "filtered.log"), filtered_log)
         
         # 步驟 5: 預處理日誌
         update_progress(70, "Preprocessing log for LLM...", session_id)
         processed_lines = preprocess_log_for_llm(filtered_log)
-        grouped = group_similar_logs(processed_lines)
+        # grouped = group_similar_logs(processed_lines)
+        grouped = processed_lines
         
         save_filtered_log_path = os.path.join(output_dir, "filtered_preprocessed.log")
         save_file(save_filtered_log_path, grouped)
@@ -240,6 +243,8 @@ def index():
         # === 儲存上傳的檔案 ===
         selected_filter = request.form.get("filter_file") 
         custom_prompt_content = request.form.get("prompt_content")
+        exclude_keywords_raw = request.form.get("exclude_keywords", "")
+        exclude_keywords = [k.strip() for k in exclude_keywords_raw.split(",") if k.strip()]
         #selected_prompt = request.form.get("prompt_file") 
         etl_file = request.files.get("etl_file")
 
@@ -271,7 +276,7 @@ def index():
         # 啟動非同步處理
         thread = threading.Thread(
             target=process_analysis_async, 
-            args=(filter_path, etl_path, output_dir, llm_helper, custom_prompt_content, session_id)
+            args=(filter_path, etl_path, output_dir, llm_helper, custom_prompt_content, session_id, exclude_keywords)
         )
         thread.daemon = True
         thread.start()
@@ -372,6 +377,8 @@ def estimate_tokens():
     try:
         filter_name = request.form.get("filter_file", "")
         etl_file = request.files.get("etl_file")
+        exclude_keywords_raw = request.form.get("exclude_keywords", "")
+        estimate_exclude_keywords = [k.strip() for k in exclude_keywords_raw.split(",") if k.strip()]
 
         if not filter_name or not etl_file:
             return jsonify({"error": "filter_file and etl_file are required"}), 400
@@ -390,9 +397,12 @@ def estimate_tokens():
 
             log_lines = read_log_file(tmp_log_path)
             filter_keywords = extract_enabled_keywords_from_filter_file(filter_path)
-            filtered_log = filter_log_by_keywords(log_lines, filter_keywords)
+            tat_exclude_keywords = extract_exclude_keywords_from_filter_file(filter_path)
+            merged_exclude = tat_exclude_keywords + estimate_exclude_keywords  # tat entries are dicts, manual entries are plain strings
+            filtered_log = filter_log_by_keywords(log_lines, filter_keywords, exclude_keywords=merged_exclude)
             processed_lines = preprocess_log_for_llm(filtered_log)
-            grouped = group_similar_logs(processed_lines)
+            # grouped = group_similar_logs(processed_lines)
+            grouped = processed_lines
         finally:
             shutil.rmtree(tmp_dir, ignore_errors=True)
 
